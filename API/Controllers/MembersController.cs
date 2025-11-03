@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")] //localhost:5001/api/members
-    [ApiController]
-    public class MembersController(AppDbContext context) : ControllerBase
+    public class MembersController(AppDbContext context) : BaseApiController
     {
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<AppUser>>> GetMemebers()
@@ -17,7 +15,7 @@ namespace API.Controllers
             return members;
         }
 
-        [HttpGet("{id}")] //localhost:5001/api/members/bob-id
+        [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetMemeber(string id)
         {
             var member = await context.Users.FindAsync(id);
