@@ -1,23 +1,27 @@
 using System.Security.Cryptography;
 using System.Text;
 using API.Data;
+using API.DTOs;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
 public class AccountController(AppDbContext context) : BaseApiController
 {
     [HttpPost("register")] // api/account/register
-    public async Task<ActionResult<AppUser>> Register(string email, string displayName, string password)
+    public async Task<ActionResult<AppUser>> Register(RegisterDto registerDto)
     {
+        if (await EmailExists(registerDto.Email)) return BadRequest("Email taken");
+
         using var hmac = new HMACSHA512();
 
         var user = new AppUser
         {
-            DisplayName = displayName,
-            Email = email,
-            Password = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
+            DisplayName = registerDto.DisplayName,
+            Email = registerDto.Email,
+            Password = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key
         };
 
@@ -25,5 +29,10 @@ public class AccountController(AppDbContext context) : BaseApiController
         await context.SaveChangesAsync();
 
         return user;
+    }
+
+    private async Task<bool> EmailExists(string email)
+    {
+        return await context.Users.AnyAsync(user => user.Email.ToLower() == email.ToLower());
     }
 }
