@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Nav } from '../layout/nav';
 
 interface IAppUser {
   id: string;
@@ -10,6 +11,7 @@ interface IAppUser {
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
+  imports: [Nav],
 })
 export class App implements OnInit{
   private http = inject(HttpClient);
