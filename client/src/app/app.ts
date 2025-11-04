@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Nav } from '../layout/nav';
+import { Nav } from '../layout';
 
 interface IAppUser {
   id: string;
@@ -13,15 +13,15 @@ interface IAppUser {
   templateUrl: './app.html',
   imports: [Nav],
 })
-export class App implements OnInit{
+export class App implements OnInit {
   private http = inject(HttpClient);
   protected readonly title = signal('Dating app');
   protected members = signal<IAppUser[]>([]);
-  
+
   public ngOnInit(): void {
     this.http.get<IAppUser[]>('https://localhost:5001/api/members').subscribe({
-      next: response => this.members.set(response), 
-      error: error => console.log(error)
+      next: response => this.members.set(response),
+      error: error => console.log(error),
     });
   }
 }
