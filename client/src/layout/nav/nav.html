@@ -23,8 +23,19 @@
 
     <div class="flex align-middle ml-auto gap-3">
       <form class="flex items-center gap-3">
-        <input type="text" class="input" placeholder="Email" />
-        <input type="text" class="input" placeholder="Password" />
+        @let email = form.email;
+        @let password = form.password;
+
+        <input
+          type="text"
+          class="input"
+          placeholder="Email"
+          [control]="email" />
+        <input
+          type="text"
+          class="input"
+          placeholder="Password"
+          [control]="password" />
         <button class="btn">Login</button>
       </form>
     </div>
