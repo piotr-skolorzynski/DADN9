@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { Control, email, form, required } from '@angular/forms/signals';
+import { Field, email, form, required, submit } from '@angular/forms/signals';
 
 interface LoginForm {
   email: string;
@@ -8,7 +8,7 @@ interface LoginForm {
 
 @Component({
   selector: 'app-nav',
-  imports: [Control],
+  imports: [Field],
   templateUrl: './nav.html',
 })
 export class Nav {
@@ -28,4 +28,8 @@ export class Nav {
       message: 'Please enter a valid email address!',
     });
   });
+
+  public login(): void {
+    console.log(this.model());
+  }
 }
