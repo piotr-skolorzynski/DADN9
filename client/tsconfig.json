@@ -19,6 +19,7 @@
       "@core/*": ["core/*"],
       "@features/*": ["features/*"],
       "@layout/*": ["layout/*"],
+      "@models/*": ["models/*"],
       "@shared/*": ["shared/*"]
     }
   },

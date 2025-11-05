@@ -1,10 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Field, email, form, required, submit } from '@angular/forms/signals';
-
-interface LoginForm {
-  email: string;
-  password: string;
-}
+import { ILoginCredentials } from '@models/index';
+import { AccountService } from 'app/core/services/account-service';
 
 @Component({
   selector: 'app-nav',
@@ -12,7 +9,9 @@ interface LoginForm {
   templateUrl: './nav.html',
 })
 export class Nav {
-  protected readonly model = signal<LoginForm>({
+  private accountService = inject(AccountService);
+
+  protected readonly model = signal<ILoginCredentials>({
     email: '',
     password: '',
   });
@@ -30,6 +29,9 @@ export class Nav {
   });
 
   public login(): void {
-    console.log(this.model());
+    this.accountService.login(this.model()).subscribe({
+      next: result => console.log(result),
+      error: error => console.log(error.message),
+    });
   }
 }
