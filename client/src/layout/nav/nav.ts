@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Field, email, form, required, submit } from '@angular/forms/signals';
+import { catchError, finalize, of, tap } from 'rxjs';
 import { ILoginCredentials } from '@models/index';
 import { AccountService } from 'app/core/services/account-service';
 
@@ -10,11 +11,14 @@ import { AccountService } from 'app/core/services/account-service';
 })
 export class Nav {
   private accountService = inject(AccountService);
-
-  protected readonly model = signal<ILoginCredentials>({
+  private readonly emptyCredentials = {
     email: '',
     password: '',
-  });
+  };
+
+  protected loggedIn = signal(false);
+
+  protected readonly model = signal<ILoginCredentials>(this.emptyCredentials);
 
   protected readonly form = form(this.model, schema => {
     required(schema.email, {
@@ -29,9 +33,24 @@ export class Nav {
   });
 
   public login(): void {
-    this.accountService.login(this.model()).subscribe({
-      next: result => console.log(result),
-      error: error => console.log(error.message),
-    });
+    this.accountService
+      .login(this.model())
+      .pipe(
+        tap(result => {
+          console.log(result);
+          this.loggedIn.set(true);
+        }),
+        catchError(error => {
+          console.log(error.message);
+
+          return of('login failed');
+        }),
+        finalize(() => this.model.set(this.emptyCredentials))
+      )
+      .subscribe();
+  }
+
+  public logout(): void {
+    this.loggedIn.set(false);
   }
 }
