@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Nav } from '../layout';
+import { Nav } from './layout';
 
 interface IAppUser {
   id: string;

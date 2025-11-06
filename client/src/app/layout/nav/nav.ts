@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { Field, email, form, required, submit } from '@angular/forms/signals';
+import { Field, email, form, required } from '@angular/forms/signals';
 import { catchError, finalize, of, tap } from 'rxjs';
-import { ILoginCredentials } from '@models/index';
-import { AccountService } from 'app/core/services/account-service';
+import { AccountService } from '@core/services';
+import { ILoginCredentials } from '@models/interfaces';
 
 @Component({
   selector: 'app-nav',
