@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { AccountService } from '@core/services';
 import { IUser } from '@models/interfaces';
 import { Nav } from './layout';
+import { Home } from './features';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  imports: [Nav],
+  imports: [Nav, Home],
 })
 export class App implements OnInit {
   private http = inject(HttpClient);
