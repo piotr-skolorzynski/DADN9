@@ -16,7 +16,7 @@ export class Nav {
     password: '',
   };
 
-  protected loggedIn = signal(false);
+  protected currentUser = this.accountService.getCurrentUser;
 
   protected readonly model = signal<ILoginCredentials>(this.emptyCredentials);
 
@@ -38,7 +38,6 @@ export class Nav {
       .pipe(
         tap(result => {
           console.log(result);
-          this.loggedIn.set(true);
         }),
         catchError(error => {
           console.log(error.message);
@@ -51,6 +50,6 @@ export class Nav {
   }
 
   public logout(): void {
-    this.loggedIn.set(false);
+    this.accountService.logout();
   }
 }

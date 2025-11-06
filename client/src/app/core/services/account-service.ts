@@ -1,7 +1,7 @@
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { IAppUser, ILoginCredentials } from '@models/interfaces/index';
+import { Observable, tap } from 'rxjs';
+import { ILoginCredentials, IUser } from '@models/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -9,8 +9,27 @@ import { IAppUser, ILoginCredentials } from '@models/interfaces/index';
 export class AccountService {
   private http = inject(HttpClient);
   private readonly baseUrl = 'https://localhost:5001/api/';
+  private currentUser = signal<IUser | null>(null);
 
-  public login(creds: ILoginCredentials): Observable<IAppUser> {
-    return this.http.post<IAppUser>(this.baseUrl + 'account/login', creds);
+  public getCurrentUser = computed(() => this.currentUser());
+
+  public setCurrentUser(user: IUser | null): void {
+    this.currentUser.set(user);
+  }
+
+  public login(creds: ILoginCredentials): Observable<IUser> {
+    return this.http.post<IUser>(this.baseUrl + 'account/login', creds).pipe(
+      tap(user => {
+        if (user) {
+          localStorage.setItem('user', JSON.stringify(user));
+          this.setCurrentUser(user);
+        }
+      })
+    );
+  }
+
+  public logout(): void {
+    localStorage.removeItem('user');
+    this.setCurrentUser(null);
   }
 }

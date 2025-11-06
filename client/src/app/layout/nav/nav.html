@@ -22,7 +22,9 @@
     </nav>
 
     <div class="flex align-middle ml-auto gap-3">
-      @if (loggedIn()) {
+      @let user = currentUser();
+
+      @if (user) {
         <div class="dropdown dropdown-end">
           <div
             tabindex="0"
@@ -32,7 +34,7 @@
               src="/user.png"
               alt="user avatar"
               class="w-8 h-8 rounded-full" />
-            <span>Bob</span>
+            <span>{{ user?.displayName }}</span>
           </div>
 
           <ul
