@@ -1,3 +1,12 @@
 <app-nav />
 
-<app-home />
+@let isNotHomePage = !(router.url === '/');
+
+<div
+  [class]="{
+    'mt-24': isNotHomePage,
+    container: isNotHomePage,
+    'mx-auto': isNotHomePage,
+  }">
+  <router-outlet />
+</div>
