@@ -1,7 +1,11 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { ILoginCredentials, IUser } from '@models/interfaces';
+import {
+  ILoginCredentials,
+  IRegisterCredentials,
+  IUser,
+} from '@models/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -17,12 +21,23 @@ export class AccountService {
     this.currentUser.set(user);
   }
 
+  public register(creds: IRegisterCredentials): Observable<IUser> {
+    return this.http.post<IUser>(this.baseUrl + 'account/register', creds).pipe(
+      tap(user => {
+        if (user) {
+          this.setCurrentUser(user);
+          this.setCurrentUserInLocalStorage(user);
+        }
+      })
+    );
+  }
+
   public login(creds: ILoginCredentials): Observable<IUser> {
     return this.http.post<IUser>(this.baseUrl + 'account/login', creds).pipe(
       tap(user => {
         if (user) {
-          localStorage.setItem('user', JSON.stringify(user));
           this.setCurrentUser(user);
+          this.setCurrentUserInLocalStorage(user);
         }
       })
     );
@@ -31,5 +46,9 @@ export class AccountService {
   public logout(): void {
     localStorage.removeItem('user');
     this.setCurrentUser(null);
+  }
+
+  private setCurrentUserInLocalStorage(user: IUser) {
+    localStorage.setItem('user', JSON.stringify(user));
   }
 }

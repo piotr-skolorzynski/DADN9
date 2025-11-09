@@ -1,6 +1,8 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { email, form, required, Field } from '@angular/forms/signals';
-import { IRegisterCredentials, IUser } from '@models/interfaces';
+import { catchError, of, tap } from 'rxjs';
+import { AccountService } from '@core/services';
+import { IRegisterCredentials } from '@models/interfaces';
 
 @Component({
   selector: 'app-register',
@@ -8,8 +10,9 @@ import { IRegisterCredentials, IUser } from '@models/interfaces';
   imports: [Field],
 })
 export class Register {
-  public usersFromHome = input.required<IUser[]>();
   public cancelRegister = output<boolean>();
+
+  private readonly accountService = inject(AccountService);
 
   private readonly emptyRegisterCredentials: IRegisterCredentials = {
     email: '',
@@ -17,11 +20,11 @@ export class Register {
     password: '',
   };
 
-  protected readonly model = signal<IRegisterCredentials>(
+  protected readonly creds = signal<IRegisterCredentials>(
     this.emptyRegisterCredentials
   );
 
-  protected readonly form = form(this.model, schema => {
+  protected readonly form = form(this.creds, schema => {
     required(schema.email, {
       message: 'Your Email is required!',
     });
@@ -37,7 +40,19 @@ export class Register {
   });
 
   public register(): void {
-    console.log(this.model());
+    this.accountService
+      .register(this.creds())
+      .pipe(
+        tap(response => {
+          console.log(response);
+          this.cancel();
+        }),
+        catchError(error => {
+          console.log(error.message);
+          return of();
+        })
+      )
+      .subscribe({});
   }
 
   public cancel(): void {

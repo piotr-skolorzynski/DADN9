@@ -22,6 +22,7 @@ export class App implements OnInit {
     this.setCurrentUser();
   }
 
+  //TODO check later if needed at all
   private getUsers(): void {
     this.http.get<IUser[]>('https://localhost:5001/api/members').subscribe({
       next: response => this.members.set(response),

@@ -27,13 +27,6 @@
         placeholder="Password"
         [field]="password" />
 
-      <select class="select w-full">
-        <option disabled selected>Pick a member</option>
-        @for (user of usersFromHome(); track user.id) {
-          <option [value]="user.id">{{ user.displayName }}</option>
-        }
-      </select>
-
       <div class="flex items-center justify-end gap-3">
         <button type="button" class="btn" type="submit" (click)="cancel()">
           Cancel
