@@ -1,8 +1,9 @@
-<div class="hero bg-base-200 min-h-screen">
+<div class="hero bg-base-200 min-h-screen w-full">
   @if (registerMode()) {
-    <div class="text-2xl text-center flex justify-center">
-      Register form goes here
-    </div>
+    <app-register
+      class="w-1/2"
+      [usersFromHome]="usersFromApp()"
+      (cancelRegister)="showRegister($event)" />
   } @else {
     <div class="hero-content text-center">
       <div class="flex flex-col items-center">

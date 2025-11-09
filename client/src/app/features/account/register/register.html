@@ -1,0 +1,45 @@
+<div class="card bg-base-100 mx-auto flex flex-col p-6 rounded-lg shadow-lg">
+  <div class="card-title justify-ceneter text-3xl text-primary">Sign up</div>
+
+  <div class="card-body">
+    <form
+      class="flex flex-col gap-4"
+      (submit)="register(); $event.preventDefault()">
+      @let email = form.email;
+      @let displayName = form.displayName;
+      @let password = form.password;
+
+      <input
+        type="email"
+        class="input w-full"
+        placeholder="Email"
+        [field]="email" />
+
+      <input
+        type="text"
+        class="input w-full"
+        placeholder="Display name"
+        [field]="displayName" />
+
+      <input
+        type="password"
+        class="input w-full"
+        placeholder="Password"
+        [field]="password" />
+
+      <select class="select w-full">
+        <option disabled selected>Pick a member</option>
+        @for (user of usersFromHome(); track user.id) {
+          <option [value]="user.id">{{ user.displayName }}</option>
+        }
+      </select>
+
+      <div class="flex items-center justify-end gap-3">
+        <button type="button" class="btn" type="submit" (click)="cancel()">
+          Cancel
+        </button>
+        <button class="btn btn-primary" type="submit">Register</button>
+      </div>
+    </form>
+  </div>
+</div>

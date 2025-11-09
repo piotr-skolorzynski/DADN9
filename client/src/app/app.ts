@@ -18,11 +18,11 @@ export class App implements OnInit {
   protected members = signal<IUser[]>([]);
 
   public ngOnInit(): void {
-    this.getUSers();
+    this.getUsers();
     this.setCurrentUser();
   }
 
-  private getUSers(): void {
+  private getUsers(): void {
     this.http.get<IUser[]>('https://localhost:5001/api/members').subscribe({
       next: response => this.members.set(response),
       error: error => console.log(error),

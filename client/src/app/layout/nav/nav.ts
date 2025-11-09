@@ -6,12 +6,12 @@ import { ILoginCredentials } from '@models/interfaces';
 
 @Component({
   selector: 'app-nav',
-  imports: [Field],
   templateUrl: './nav.html',
+  imports: [Field],
 })
 export class Nav {
   private accountService = inject(AccountService);
-  private readonly emptyCredentials = {
+  private readonly emptyCredentials: ILoginCredentials = {
     email: '',
     password: '',
   };
