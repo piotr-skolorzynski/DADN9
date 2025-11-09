@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Field, email, form, required } from '@angular/forms/signals';
 import { catchError, finalize, of, tap } from 'rxjs';
 import { AccountService } from '@core/services';
@@ -7,19 +8,18 @@ import { ILoginCredentials } from '@models/interfaces';
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.html',
-  imports: [Field],
+  imports: [Field, RouterLink, RouterLinkActive],
 })
 export class Nav {
-  private accountService = inject(AccountService);
+  private readonly router = inject(Router);
+  private readonly accountService = inject(AccountService);
   private readonly emptyCredentials: ILoginCredentials = {
     email: '',
     password: '',
   };
 
   protected currentUser = this.accountService.getCurrentUser;
-
   protected readonly model = signal<ILoginCredentials>(this.emptyCredentials);
-
   protected readonly form = form(this.model, schema => {
     required(schema.email, {
       message: 'Your Email is required!',
@@ -36,9 +36,7 @@ export class Nav {
     this.accountService
       .login(this.model())
       .pipe(
-        tap(result => {
-          console.log(result);
-        }),
+        tap(_ => this.router.navigateByUrl('/members')),
         catchError(error => {
           console.log(error.message);
 
@@ -51,5 +49,6 @@ export class Nav {
 
   public logout(): void {
     this.accountService.logout();
+    this.router.navigateByUrl('/');
   }
 }
