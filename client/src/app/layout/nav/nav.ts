@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Field, email, form, required } from '@angular/forms/signals';
 import { catchError, finalize, of, tap } from 'rxjs';
-import { AccountService } from '@core/services';
+import { AccountService, ToastService } from '@core/services';
 import { ILoginCredentials } from '@models/interfaces';
 
 @Component({
@@ -13,6 +13,7 @@ import { ILoginCredentials } from '@models/interfaces';
 export class Nav {
   private readonly router = inject(Router);
   private readonly accountService = inject(AccountService);
+  private readonly toastService = inject(ToastService);
   private readonly emptyCredentials: ILoginCredentials = {
     email: '',
     password: '',
@@ -36,11 +37,14 @@ export class Nav {
     this.accountService
       .login(this.model())
       .pipe(
-        tap(_ => this.router.navigateByUrl('/members')),
+        tap(_ => {
+          this.toastService.success('Logged in successfully');
+          this.router.navigateByUrl('/members');
+        }),
         catchError(error => {
-          console.log(error.message);
+          this.toastService.error(error.error);
 
-          return of('login failed');
+          return of();
         }),
         finalize(() => this.model.set(this.emptyCredentials))
       )
