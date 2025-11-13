@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterOutlet } from '@angular/router';
 import { AccountService } from '@core/services';
@@ -10,34 +10,7 @@ import { Nav } from './layout';
   templateUrl: './app.html',
   imports: [Nav, RouterOutlet],
 })
-export class App implements OnInit {
-  private readonly http = inject(HttpClient);
-  private readonly accountService = inject(AccountService);
-
+export class App {
   protected readonly router = inject(Router);
   protected readonly title = signal('Dating app');
-  protected members = signal<IUser[]>([]);
-
-  public ngOnInit(): void {
-    this.getUsers();
-    this.setCurrentUser();
-  }
-
-  //TODO check later if needed at all
-  private getUsers(): void {
-    this.http.get<IUser[]>('https://localhost:5001/api/members').subscribe({
-      next: response => this.members.set(response),
-      error: error => console.log(error),
-    });
-  }
-
-  private setCurrentUser(): void {
-    const userString = localStorage.getItem('user');
-    if (!userString) {
-      return;
-    }
-
-    const user = JSON.parse(userString);
-    this.accountService.setCurrentUser(user);
-  }
 }
