@@ -12,13 +12,13 @@ import { ILoginCredentials } from '@models/interfaces';
 })
 export class Nav {
   private readonly router = inject(Router);
-  private readonly accountService = inject(AccountService);
   private readonly toastService = inject(ToastService);
   private readonly emptyCredentials: ILoginCredentials = {
     email: '',
     password: '',
   };
 
+  protected readonly accountService = inject(AccountService);
   protected currentUser = this.accountService.getCurrentUser;
   protected readonly model = signal<ILoginCredentials>(this.emptyCredentials);
   protected readonly form = form(this.model, schema => {
