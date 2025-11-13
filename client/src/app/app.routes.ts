@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '@core/guards';
 import { Home, Lists, MemberDetailed, MemberList, Messages } from './features';
 
 export const routes: Routes = [
@@ -9,6 +10,7 @@ export const routes: Routes = [
   {
     path: 'members',
     component: MemberList,
+    canActivate: [authGuard],
   },
   {
     path: 'members/:id',
