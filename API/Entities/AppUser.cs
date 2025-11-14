@@ -9,4 +9,7 @@ public class AppUser
     public string? ImageUrl { get; set; }
     public required byte[] Password { get; set; }
     public required byte[] PasswordSalt { get; set; }
+
+    //Nav property
+    public Member Member { get; set; } = null!;
 }
