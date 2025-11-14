@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 
 @Component({
   selector: 'app-test-errors',
@@ -8,6 +8,8 @@ import { Component, inject } from '@angular/core';
 export class TestErrors {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = 'https://localhost:5001/api/';
+
+  public validationErrors = signal<string[]>([]);
 
   public get404Error(): void {
     this.http.get(this.baseUrl + 'buggy/not-found').subscribe({
@@ -40,7 +42,10 @@ export class TestErrors {
   public get400ValidationError(): void {
     this.http.post(this.baseUrl + 'account/register', {}).subscribe({
       next: response => console.log(response),
-      error: error => console.log(error),
+      error: error => {
+        console.log(error);
+        this.validationErrors.set(error);
+      },
     });
   }
 }
