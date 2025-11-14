@@ -8,6 +8,7 @@ import {
   Messages,
   TestErrors,
 } from './features';
+import { NotFound } from './shared';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    component: Home, //TODO: create notFoundPage
+    component: NotFound,
   },
 ];
