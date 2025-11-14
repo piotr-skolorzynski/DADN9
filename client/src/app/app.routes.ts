@@ -8,7 +8,7 @@ import {
   Messages,
   TestErrors,
 } from './features';
-import { NotFound } from './shared';
+import { NotFound, ServerError } from './shared';
 
 export const routes: Routes = [
   {
@@ -41,6 +41,10 @@ export const routes: Routes = [
   {
     path: 'errors',
     component: TestErrors,
+  },
+  {
+    path: 'server-error',
+    component: ServerError,
   },
   {
     path: '**',
