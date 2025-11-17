@@ -6,13 +6,14 @@ import {
   IRegisterCredentials,
   IUser,
 } from '@models/interfaces';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:5001/api/';
+  private readonly baseUrl = environment.apiUrl;
   private currentUser = signal<IUser | null>(null);
 
   public getCurrentUser = computed(() => this.currentUser());
