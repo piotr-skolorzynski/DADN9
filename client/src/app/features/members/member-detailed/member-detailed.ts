@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -7,8 +7,7 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
-import { filter, of, switchMap, tap } from 'rxjs';
-import { MemberService } from '@core/services';
+import { filter, tap } from 'rxjs';
 import { IMember } from '@models/interfaces';
 
 @Component({
