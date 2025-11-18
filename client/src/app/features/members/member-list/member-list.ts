@@ -6,7 +6,6 @@ import { MemberCard } from '../member-card/member-card';
 @Component({
   selector: 'app-member-list',
   templateUrl: './member-list.html',
-  styleUrl: './member-list.css',
   imports: [MemberCard],
 })
 export class MemberList {

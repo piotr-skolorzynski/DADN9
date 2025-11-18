@@ -1,14 +1,16 @@
 @if (member(); as member) {
-  <div class="card card-sm">
+  <div
+    class="card card-sm cursor-pointer transition-all duration-300 ease-in-out transform hover:-translate-y-2"
+    routerLink="/members/{{ member.id }}">
     <figure>
       <img
-        class="rounded-t-lg w-full"
+        class="rounded-lg w-full"
         src="{{ member.imageUrl || '/user.png' }}"
         alt="{{ member.displayName }} image" />
     </figure>
 
     <div
-      class="card-body bg-black z-50 w-full px-3 py-1 rounded-b-lg text-white flex flex-col">
+      class="card-actions absolute bottom-0 z-50 w-full px-3 py-1 rounded-b-lg text-white flex flex-col bg-linear-to-t from-black via-black/75">
       <span class="font-semibold">{{ member.displayName }}, 25</span>
       <span class="text-sm">{{ member.city }}</span>
     </div>
