@@ -1,14 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, of, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
+import { of, switchMap, tap } from 'rxjs';
 import { MemberService } from '@core/services';
 import { IMember } from '@models/interfaces';
 
 @Component({
   selector: 'app-member-detailed',
-  imports: [],
   templateUrl: './member-detailed.html',
-  styleUrl: './member-detailed.css',
+  imports: [RouterLink, RouterLinkActive],
 })
 export class MemberDetailed implements OnInit {
   private readonly route = inject(ActivatedRoute);
