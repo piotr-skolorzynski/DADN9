@@ -12,6 +12,7 @@ import {
   Messages,
   TestErrors,
 } from './features';
+import { memberResolver } from '@core/resolvers';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,8 @@ export const routes: Routes = [
       },
       {
         path: 'members/:id',
+        resolve: { member: memberResolver },
+        runGuardsAndResolvers: 'always',
         component: MemberDetailed,
         children: [
           {

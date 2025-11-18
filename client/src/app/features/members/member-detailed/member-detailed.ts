@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -19,13 +19,12 @@ import { IMember } from '@models/interfaces';
 export class MemberDetailed implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly memberService = inject(MemberService);
+  protected member = signal<IMember | undefined>(undefined);
   protected title = signal<string | undefined>('Profile');
-  protected member = signal<IMember | null>(null);
 
   public ngOnInit(): void {
     this.initializeDetailsTitle();
-    this.loadMember();
+    this.initializeMemberData();
   }
 
   private initializeDetailsTitle(): void {
@@ -37,19 +36,9 @@ export class MemberDetailed implements OnInit {
       .subscribe();
   }
 
-  private loadMember(): void {
-    this.route.paramMap
-      .pipe(
-        switchMap(params => {
-          const memberId = params.get('id')!;
-          if (memberId) {
-            return this.memberService.getMember(memberId);
-          }
-
-          return of(null);
-        }),
-        tap((member: IMember | null) => this.member.set(member))
-      )
+  private initializeMemberData(): void {
+    this.route.data
+      .pipe(tap(data => this.member.set(data['member'])))
       .subscribe();
   }
 }
