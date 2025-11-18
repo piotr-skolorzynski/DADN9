@@ -2,10 +2,12 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { tap } from 'rxjs';
 import { IMember } from '@models/interfaces';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-member-profile',
   templateUrl: './member-profile.html',
+  imports: [DatePipe],
 })
 export class MemberProfile implements OnInit {
   private readonly route = inject(ActivatedRoute);
