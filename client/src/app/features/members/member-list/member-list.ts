@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MemberService } from '@core/services';
+import { MemberCard } from '../member-card/member-card';
 
 @Component({
   selector: 'app-member-list',
-  imports: [],
   templateUrl: './member-list.html',
   styleUrl: './member-list.css',
+  imports: [MemberCard],
 })
 export class MemberList {
   private readonly memberService = inject(MemberService);

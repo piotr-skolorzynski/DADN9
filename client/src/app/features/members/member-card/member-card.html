@@ -1,0 +1,16 @@
+@if (member(); as member) {
+  <div class="card card-sm">
+    <figure>
+      <img
+        class="rounded-t-lg w-full"
+        src="{{ member.imageUrl || '/user.png' }}"
+        alt="{{ member.displayName }} image" />
+    </figure>
+
+    <div
+      class="card-body bg-black z-50 w-full px-3 py-1 rounded-b-lg text-white flex flex-col">
+      <span class="font-semibold">{{ member.displayName }}, 25</span>
+      <span class="text-sm">{{ member.city }}</span>
+    </div>
+  </div>
+}
