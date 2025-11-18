@@ -6,8 +6,11 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideRouter, withViewTransitions } from '@angular/router';
-
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withViewTransitions,
+} from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { InitService } from '@core/services';
 import { errorInterceptor, jwtInterceptor } from '@core/interceptors';
@@ -17,7 +20,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideRouter(routes, withViewTransitions()),
+    provideRouter(routes, withViewTransitions(), withComponentInputBinding()),
     provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor])),
     provideAppInitializer(async () => {
       const initService = inject(InitService);

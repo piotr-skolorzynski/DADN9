@@ -1,14 +1,17 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/guards';
+import { NotFound, ServerError } from './shared';
 import {
   Home,
   Lists,
   MemberDetailed,
   MemberList,
+  MemberMessages,
+  MemberPhotos,
+  MemberProfile,
   Messages,
   TestErrors,
 } from './features';
-import { NotFound, ServerError } from './shared';
 
 export const routes: Routes = [
   {
@@ -27,6 +30,28 @@ export const routes: Routes = [
       {
         path: 'members/:id',
         component: MemberDetailed,
+        children: [
+          {
+            path: '',
+            redirectTo: 'profile',
+            pathMatch: 'full',
+          },
+          {
+            path: 'profile',
+            component: MemberProfile,
+            title: 'Profile',
+          },
+          {
+            path: 'photos',
+            component: MemberPhotos,
+            title: 'Photos',
+          },
+          {
+            path: 'messages',
+            component: MemberMessages,
+            title: 'Messages',
+          },
+        ],
       },
       {
         path: 'lists',

@@ -4,5 +4,8 @@ export * from './lists/lists';
 export * from './members/member-card/member-card';
 export * from './members/member-detailed/member-detailed';
 export * from './members/member-list/member-list';
+export * from './members/member-messages/member-messages';
+export * from './members/member-photos/member-photos';
+export * from './members/member-profile/member-profile';
 export * from './messages/messages';
 export * from './test-errors/test-errors';
