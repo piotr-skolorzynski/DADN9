@@ -6,7 +6,6 @@ import { IMember } from '@models/interfaces';
 @Component({
   selector: 'app-member-profile',
   templateUrl: './member-profile.html',
-  imports: [],
 })
 export class MemberProfile implements OnInit {
   private readonly route = inject(ActivatedRoute);
