@@ -8,7 +8,7 @@ import { AccountService } from './account.service';
 @Injectable({
   providedIn: 'root',
 })
-export class Member {
+export class MemberService {
   private readonly http = inject(HttpClient);
   private readonly accountService = inject(AccountService);
   private readonly baseUrl = environment.apiUrl;
@@ -27,7 +27,7 @@ export class Member {
     );
   }
 
-  private getHttpOptions() {
+  private getHttpOptions(): { headers: HttpHeaders } {
     return {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + this.accountService.getCurrentUser()?.token,
