@@ -9,11 +9,12 @@ import {
 } from '@angular/router';
 import { filter, tap } from 'rxjs';
 import { IMember } from '@models/interfaces';
+import { AgePipe } from '@core/pipes';
 
 @Component({
   selector: 'app-member-detailed',
   templateUrl: './member-detailed.html',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [AgePipe, RouterLink, RouterLinkActive, RouterOutlet],
 })
 export class MemberDetailed implements OnInit {
   private readonly route = inject(ActivatedRoute);
