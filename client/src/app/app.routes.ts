@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@core/guards';
+import { authGuard, preventUnsavedChangesGuard } from '@core/guards';
 import { NotFound, ServerError } from './shared';
 import {
   Home,
@@ -43,6 +43,7 @@ export const routes: Routes = [
             path: 'profile',
             component: MemberProfile,
             title: 'Profile',
+            canDeactivate: [preventUnsavedChangesGuard],
           },
           {
             path: 'photos',

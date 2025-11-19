@@ -1,4 +1,13 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { form, Field } from '@angular/forms/signals';
@@ -26,7 +35,7 @@ export class MemberProfile implements OnInit, OnDestroy {
   protected readonly editableMemberData = signal<IEditableMember>(
     this.emptyEditableMember
   );
-  protected readonly form = form(this.editableMemberData);
+  public readonly form = form(this.editableMemberData);
 
   public ngOnInit(): void {
     this.initializeMemberData();
@@ -62,5 +71,12 @@ export class MemberProfile implements OnInit, OnDestroy {
     console.log('profile updated: ', updatedMember);
     this.toastService.success('Profile updated successfully');
     this.memberService.setEditMode(false);
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  public notify($event: BeforeUnloadEvent): void {
+    if (this.form().dirty()) {
+      $event.preventDefault();
+    }
   }
 }
