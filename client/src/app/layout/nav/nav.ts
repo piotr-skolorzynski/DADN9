@@ -1,16 +1,17 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Field, email, form, required } from '@angular/forms/signals';
 import { catchError, finalize, of, tap } from 'rxjs';
 import { AccountService, ToastService } from '@core/services';
 import { ILoginCredentials } from '@models/interfaces';
+import { themes } from '@layout/themes';
 
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.html',
   imports: [Field, RouterLink, RouterLinkActive],
 })
-export class Nav {
+export class Nav implements OnInit {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   private readonly emptyCredentials: ILoginCredentials = {
@@ -32,6 +33,24 @@ export class Nav {
       message: 'Please enter a valid email address!',
     });
   });
+  protected selectedTheme = signal<string>(
+    localStorage.getItem('theme') || 'light'
+  );
+  protected themes = themes;
+
+  public ngOnInit(): void {
+    document.documentElement.setAttribute('data-theme', this.selectedTheme());
+  }
+
+  public handleSelectTheme(theme: string): void {
+    this.selectedTheme.set(theme);
+    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    const activeElement = document.activeElement as HTMLDivElement;
+    if (activeElement) {
+      activeElement.blur();
+    }
+  }
 
   public login(): void {
     this.accountService
