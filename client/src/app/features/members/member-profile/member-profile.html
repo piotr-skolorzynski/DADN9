@@ -54,7 +54,12 @@
         </label>
 
         <div class="flex self-end">
-          <button type="submit" class="btn btn-success">Submit</button>
+          <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="!form().dirty()">
+            Submit
+          </button>
         </div>
       </form>
     } @else {

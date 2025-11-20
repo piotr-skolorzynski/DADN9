@@ -9,8 +9,8 @@ import {
 import { DatePipe } from '@angular/common';
 import { form, Field } from '@angular/forms/signals';
 import { finalize, tap } from 'rxjs';
-import { MemberService, ToastService } from '@core/services';
-import { IEditableMember, IMember } from '@models/interfaces';
+import { AccountService, MemberService, ToastService } from '@core/services';
+import { IEditableMember, IMember, IUser } from '@models/interfaces';
 
 @Component({
   selector: 'app-member-profile',
@@ -20,6 +20,7 @@ import { IEditableMember, IMember } from '@models/interfaces';
 export class MemberProfile implements OnInit, OnDestroy {
   private readonly memberService = inject(MemberService);
   private readonly toastService = inject(ToastService);
+  private readonly accountService = inject(AccountService);
   protected isEditMode = this.memberService.isEditMode;
   protected member = this.memberService.member;
   protected readonly emptyEditableMember: IEditableMember = {
@@ -61,6 +62,17 @@ export class MemberProfile implements OnInit, OnDestroy {
       .updateMember(updatedMember)
       .pipe(
         finalize(() => {
+          const currentUser = this.accountService.getCurrentUser();
+          if (
+            currentUser &&
+            updatedMember.displayName !== currentUser.displayName
+          ) {
+            this.accountService.setCurrentUser({
+              ...currentUser,
+              displayName: updatedMember.displayName,
+            });
+          }
+
           this.toastService.success('Profile updated successfully');
           this.memberService.setEditMode(false);
           this.memberService.setMember(updatedMember as IMember);
