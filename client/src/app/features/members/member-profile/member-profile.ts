@@ -1,7 +1,5 @@
 import {
   Component,
-  computed,
-  effect,
   HostListener,
   inject,
   OnDestroy,
@@ -9,7 +7,6 @@ import {
   signal,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { form, Field } from '@angular/forms/signals';
 import { finalize, tap } from 'rxjs';
 import { MemberService, ToastService } from '@core/services';
@@ -21,11 +18,10 @@ import { IEditableMember, IMember } from '@models/interfaces';
   imports: [DatePipe, Field],
 })
 export class MemberProfile implements OnInit, OnDestroy {
-  private readonly route = inject(ActivatedRoute);
   private readonly memberService = inject(MemberService);
   private readonly toastService = inject(ToastService);
   protected isEditMode = this.memberService.isEditMode;
-  protected member = signal<IMember | undefined>(undefined);
+  protected member = this.memberService.member;
   protected readonly emptyEditableMember: IEditableMember = {
     displayName: '',
     description: '',
@@ -38,7 +34,6 @@ export class MemberProfile implements OnInit, OnDestroy {
   public readonly form = form(this.editableMemberData);
 
   public ngOnInit(): void {
-    this.initializeMemberData();
     this.initializeForm();
   }
 
@@ -46,12 +41,6 @@ export class MemberProfile implements OnInit, OnDestroy {
     if (this.isEditMode()) {
       this.memberService.setEditMode(false);
     }
-  }
-
-  private initializeMemberData(): void {
-    this.route.parent?.data
-      .pipe(tap(data => this.member.set(data['member'])))
-      .subscribe();
   }
 
   private initializeForm(): void {
@@ -74,6 +63,7 @@ export class MemberProfile implements OnInit, OnDestroy {
         finalize(() => {
           this.toastService.success('Profile updated successfully');
           this.memberService.setEditMode(false);
+          this.memberService.setMember(updatedMember as IMember);
           this.form().reset();
         })
       )

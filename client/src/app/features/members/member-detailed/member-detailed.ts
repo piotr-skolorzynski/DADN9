@@ -23,7 +23,7 @@ export class MemberDetailed implements OnInit {
   private readonly accountService = inject(AccountService);
   private readonly memberService = inject(MemberService);
   protected isEditMode = this.memberService.isEditMode;
-  protected member = signal<IMember | undefined>(undefined);
+  protected member = this.memberService.member;
   protected title = signal<string | undefined>('Profile');
   protected isCurrentUser = computed(
     () => this.accountService.getCurrentUser()?.id === this.member()?.id
@@ -31,7 +31,6 @@ export class MemberDetailed implements OnInit {
 
   public ngOnInit(): void {
     this.initializeDetailsTitle();
-    this.initializeMemberData();
   }
 
   public handleEditMode(): void {
@@ -44,12 +43,6 @@ export class MemberDetailed implements OnInit {
         filter(event => event instanceof NavigationEnd),
         tap(() => this.title.set(this.route.firstChild?.snapshot?.title))
       )
-      .subscribe();
-  }
-
-  private initializeMemberData(): void {
-    this.route.data
-      .pipe(tap(data => this.member.set(data['member'])))
       .subscribe();
   }
 }

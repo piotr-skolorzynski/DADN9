@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { IEditableMember, IMember, IPhoto } from '@models/interfaces';
 import { environment } from 'environments/environment';
 
@@ -11,11 +11,18 @@ export class MemberService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
   private editMode = signal(false);
+  private memberSignal = signal<IMember | null>(null);
 
   public isEditMode = computed(() => this.editMode());
 
+  public member = computed(() => this.memberSignal());
+
   public setEditMode(isEdit: boolean): void {
     this.editMode.set(isEdit);
+  }
+
+  public setMember(member: IMember): void {
+    this.memberSignal.set(member);
   }
 
   public getMembers(): Observable<IMember[]> {
@@ -23,7 +30,9 @@ export class MemberService {
   }
 
   public getMember(id: string): Observable<IMember> {
-    return this.http.get<IMember>(this.baseUrl + 'members/' + id);
+    return this.http
+      .get<IMember>(this.baseUrl + 'members/' + id)
+      .pipe(tap(member => this.setMember(member)));
   }
 
   public getMemberPhotos(id: string): Observable<IPhoto[]> {
