@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IMember, IPhoto } from '@models/interfaces';
+import { IEditableMember, IMember, IPhoto } from '@models/interfaces';
 import { environment } from 'environments/environment';
 
 @Injectable({
@@ -28,5 +28,9 @@ export class MemberService {
 
   public getMemberPhotos(id: string): Observable<IPhoto[]> {
     return this.http.get<IPhoto[]>(this.baseUrl + 'members/' + id + '/photos');
+  }
+
+  public updateMember(member: IEditableMember): Observable<void> {
+    return this.http.put<void>(this.baseUrl + 'members', member);
   }
 }

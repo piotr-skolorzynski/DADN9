@@ -11,7 +11,7 @@ import {
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { form, Field } from '@angular/forms/signals';
-import { tap } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 import { MemberService, ToastService } from '@core/services';
 import { IEditableMember, IMember } from '@models/interfaces';
 
@@ -68,9 +68,16 @@ export class MemberProfile implements OnInit, OnDestroy {
       return;
     }
     const updatedMember = { ...this.member(), ...this.editableMemberData() };
-    console.log('profile updated: ', updatedMember);
-    this.toastService.success('Profile updated successfully');
-    this.memberService.setEditMode(false);
+    this.memberService
+      .updateMember(updatedMember)
+      .pipe(
+        finalize(() => {
+          this.toastService.success('Profile updated successfully');
+          this.memberService.setEditMode(false);
+          this.form().reset();
+        })
+      )
+      .subscribe();
   }
 
   @HostListener('window:beforeunload', ['$event'])
