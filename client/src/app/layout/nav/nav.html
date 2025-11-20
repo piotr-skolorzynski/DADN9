@@ -40,6 +40,10 @@
       Errors
     </a>
 
+    @if (busyService.busyRequestCount()) {
+      <span class="loading loading-spinner text-accent"></span>
+    }
+
     <div class="flex align-middle ml-auto gap-3">
       <div class="dropdown dropdown-end mr-5">
         <button

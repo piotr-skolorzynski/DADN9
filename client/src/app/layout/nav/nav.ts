@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Field, email, form, required } from '@angular/forms/signals';
 import { catchError, finalize, of, tap } from 'rxjs';
-import { AccountService, ToastService } from '@core/services';
+import { AccountService, BusyService, ToastService } from '@core/services';
 import { ILoginCredentials } from '@models/interfaces';
 import { themes } from '@layout/themes';
 
@@ -14,6 +14,7 @@ import { themes } from '@layout/themes';
 export class Nav implements OnInit {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+  protected readonly busyService = inject(BusyService);
   private readonly emptyCredentials: ILoginCredentials = {
     email: '',
     password: '',
