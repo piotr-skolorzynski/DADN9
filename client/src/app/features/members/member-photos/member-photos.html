@@ -1,25 +1,23 @@
-@if (photos(); as photos) {
-  @if (photos.length) {
-    <div
-      class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
-      @for (photo of photos; track photo.id) {
-        <figure>
-          <img
-            src="{{ photo.url }}"
-            alt="photo of member"
-            class="w-full rounde-lg" />
-        </figure>
-      }
-      @for (photo of photoMocks; track $index) {
-        <figure>
-          <img
-            src="{{ photo.url }}"
-            alt="photo of member"
-            class="w-full rounde-lg" />
-        </figure>
-      }
-    </div>
-  } @else {
-    <div>No photos</div>
+@if (isEditMode()) {
+  @if (photos(); as photos) {
+    @if (photos.length) {
+      <div
+        class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
+        @for (photo of photos; track photo.id) {
+          <figure>
+            <img
+              src="{{ photo.url }}"
+              alt="photo of member"
+              class="w-full rounde-lg" />
+          </figure>
+        }
+      </div>
+    } @else {
+      <p class="text-center text-gray-500">No photos available</p>
+    }
   }
+} @else {
+  <app-image-upload
+    [loading]="loading()"
+    (uploadFile)="onUploadImage($event)" />
 }

@@ -42,4 +42,11 @@ export class MemberService {
   public updateMember(member: IEditableMember): Observable<void> {
     return this.http.put<void>(this.baseUrl + 'members', member);
   }
+
+  public uploadPhoto(file: File): Observable<IPhoto> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<IPhoto>(this.baseUrl + 'members/add-photo', formData);
+  }
 }
