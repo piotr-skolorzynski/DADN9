@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, EMPTY, switchMap, tap } from 'rxjs';
-import { MemberService } from '@core/services';
-import { IPhoto } from '@models/interfaces';
+import { AccountService, MemberService } from '@core/services';
+import { IMember, IPhoto } from '@models/interfaces';
 import { ImageUpload } from '@shared/index';
 
 @Component({
@@ -12,7 +12,8 @@ import { ImageUpload } from '@shared/index';
 })
 export class MemberPhotos implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly memberService = inject(MemberService);
+  protected readonly memberService = inject(MemberService);
+  private readonly accountService = inject(AccountService);
   protected isEditMode = this.memberService.isEditMode;
   protected photos = signal<IPhoto[]>([]);
   protected loading = signal(false);
@@ -36,6 +37,31 @@ export class MemberPhotos implements OnInit {
           this.loading.set(false);
 
           return EMPTY;
+        })
+      )
+      .subscribe();
+  }
+
+  public setMainPhoto(photo: IPhoto): void {
+    this.memberService
+      .setMainPhoto(photo.id)
+      .pipe(
+        tap(() => {
+          const currentUser = this.accountService.getCurrentUser();
+          if (currentUser) {
+            this.accountService.setCurrentUser({
+              ...currentUser,
+              imageUrl: photo.url,
+            });
+
+            const member = this.memberService.member();
+            if (member) {
+              this.memberService.setMember({
+                ...member,
+                imageUrl: photo.url,
+              } as IMember);
+            }
+          }
         })
       )
       .subscribe();

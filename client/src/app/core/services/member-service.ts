@@ -49,4 +49,11 @@ export class MemberService {
 
     return this.http.post<IPhoto>(this.baseUrl + 'members/add-photo', formData);
   }
+
+  public setMainPhoto(photoId: number): Observable<void> {
+    return this.http.put<void>(
+      this.baseUrl + 'members/set-main-photo/' + photoId,
+      {}
+    );
+  }
 }
