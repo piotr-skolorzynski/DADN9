@@ -55,7 +55,12 @@
           Cancel
         </button>
 
-        <button class="btn btn-primary" type="submit">Register</button>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="form().invalid()">
+          Register
+        </button>
       </div>
     </form>
   </div>

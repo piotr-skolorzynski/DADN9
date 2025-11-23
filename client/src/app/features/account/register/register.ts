@@ -1,5 +1,14 @@
 import { Component, inject, output, signal } from '@angular/core';
-import { email, form, required, Field } from '@angular/forms/signals';
+import {
+  email,
+  form,
+  required,
+  Field,
+  minLength,
+  maxLength,
+  validate,
+  customError,
+} from '@angular/forms/signals';
 import { catchError, of, tap } from 'rxjs';
 import { AccountService } from '@core/services';
 import { IRegisterCredentials } from '@models/interfaces';
@@ -30,17 +39,30 @@ export class Register {
     required(schema.email, {
       message: 'Your Email is required!',
     });
+    email(schema.email, {
+      message: 'Please enter a valid email address!',
+    });
     required(schema.displayName, {
       message: 'Your Display name is required!',
     });
     required(schema.password, {
       message: 'Your password is required!',
     });
+    minLength(schema.password, 4);
+    maxLength(schema.password, 8);
     required(schema.confirmPassword, {
       message: 'Please Confirm your password',
     });
-    email(schema.email, {
-      message: 'Please enter a valid email address!',
+    validate(schema.confirmPassword, ctx => {
+      const password = ctx.valueOf(schema.password);
+      const confirmPassword = ctx.value();
+
+      return password === confirmPassword
+        ? undefined
+        : customError({
+            message: 'Passwords do not match',
+            kind: 'passwordMismatch',
+          });
     });
   });
 
