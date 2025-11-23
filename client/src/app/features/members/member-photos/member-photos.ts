@@ -3,12 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { catchError, EMPTY, switchMap, tap } from 'rxjs';
 import { AccountService, MemberService } from '@core/services';
 import { IMember, IPhoto } from '@models/interfaces';
-import { ImageUpload } from '@shared/index';
+import { ImageUpload, StarButton } from '@shared/index';
 
 @Component({
   selector: 'app-member-photos',
   templateUrl: './member-photos.html',
-  imports: [ImageUpload],
+  imports: [ImageUpload, StarButton],
 })
 export class MemberPhotos implements OnInit {
   private readonly route = inject(ActivatedRoute);
