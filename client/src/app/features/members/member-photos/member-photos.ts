@@ -1,14 +1,15 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, EMPTY, switchMap, tap } from 'rxjs';
 import { AccountService, MemberService } from '@core/services';
 import { IMember, IPhoto } from '@models/interfaces';
 import { ImageUpload, StarButton } from '@shared/index';
+import { DeleteButton } from '@shared/delete-button/delete-button';
 
 @Component({
   selector: 'app-member-photos',
   templateUrl: './member-photos.html',
-  imports: [ImageUpload, StarButton],
+  imports: [ImageUpload, StarButton, DeleteButton],
 })
 export class MemberPhotos implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -17,6 +18,16 @@ export class MemberPhotos implements OnInit {
   protected isEditMode = this.memberService.isEditMode;
   protected photos = signal<IPhoto[]>([]);
   protected loading = signal(false);
+  protected isCurrentUser = computed(() => {
+    const member = this.memberService.member();
+    const currentUser = this.accountService.getCurrentUser();
+
+    if (member && currentUser) {
+      return member?.id === currentUser?.id;
+    }
+
+    return false;
+  });
 
   public ngOnInit(): void {
     this.initializeMemberData();
@@ -62,6 +73,19 @@ export class MemberPhotos implements OnInit {
               } as IMember);
             }
           }
+        })
+      )
+      .subscribe();
+  }
+
+  public delePhoto(photoId: number): void {
+    this.memberService
+      .deletePhoto(photoId)
+      .pipe(
+        tap(() => {
+          this.photos.update(photos =>
+            photos.filter(photo => photo.id !== photoId)
+          );
         })
       )
       .subscribe();
