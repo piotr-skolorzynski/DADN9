@@ -8,31 +8,60 @@
       @let email = form.email;
       @let displayName = form.displayName;
       @let password = form.password;
+      @let confirmPassword = form.confirmPassword;
 
-      <input
-        type="email"
-        class="input w-full"
-        placeholder="Email"
-        [field]="email" />
+      <label class="floating-label">
+        <span>Email</span>
 
-      <input
-        type="text"
-        class="input w-full"
-        placeholder="Display name"
-        [field]="displayName" />
+        <input
+          type="email"
+          class="input w-full"
+          placeholder="Email"
+          [field]="email" />
+      </label>
 
-      <input
-        type="password"
-        class="input w-full"
-        placeholder="Password"
-        [field]="password" />
+      <label class="floating-label">
+        <span>Display Name</span>
+
+        <input
+          type="text"
+          class="input w-full"
+          placeholder="Display name"
+          [field]="displayName" />
+      </label>
+
+      <label class="floating-label">
+        <span>Password</span>
+
+        <input
+          type="password"
+          class="input w-full"
+          placeholder="Password"
+          [field]="password" />
+      </label>
+
+      <label class="floating-label">
+        <span>Confirm Password</span>
+
+        <input
+          type="password"
+          class="input w-full"
+          placeholder="Confirm Password"
+          [field]="confirmPassword" />
+      </label>
 
       <div class="flex items-center justify-end gap-3">
         <button type="button" class="btn" type="submit" (click)="cancel()">
           Cancel
         </button>
+
         <button class="btn btn-primary" type="submit">Register</button>
       </div>
     </form>
+  </div>
+
+  <div class="flex flex-col w-full mockup-code text-lg">
+    <div class="px-3">Form value: {{ form().value() | json }}</div>
+    <div class="px-3">Form isValid: {{ form().valid() | json }}</div>
   </div>
 </div>

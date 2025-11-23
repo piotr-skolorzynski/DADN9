@@ -3,11 +3,12 @@ import { email, form, required, Field } from '@angular/forms/signals';
 import { catchError, of, tap } from 'rxjs';
 import { AccountService } from '@core/services';
 import { IRegisterCredentials } from '@models/interfaces';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
-  imports: [Field],
+  imports: [Field, JsonPipe],
 })
 export class Register {
   public cancelRegister = output<boolean>();
@@ -18,6 +19,7 @@ export class Register {
     email: '',
     displayName: '',
     password: '',
+    confirmPassword: '',
   };
 
   protected readonly creds = signal<IRegisterCredentials>(
@@ -33,6 +35,9 @@ export class Register {
     });
     required(schema.password, {
       message: 'Your password is required!',
+    });
+    required(schema.confirmPassword, {
+      message: 'Please Confirm your password',
     });
     email(schema.email, {
       message: 'Please enter a valid email address!',
