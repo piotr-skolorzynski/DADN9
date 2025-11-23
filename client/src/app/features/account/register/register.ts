@@ -43,7 +43,7 @@ export class Register {
       message: 'Please enter a valid email address!',
     });
     required(schema.displayName, {
-      message: 'Your Display name is required!',
+      message: 'Your name is required!',
     });
     required(schema.password, {
       message: 'Your password is required!',
