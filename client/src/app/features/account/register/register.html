@@ -1,83 +1,113 @@
 <div class="card bg-base-100 mx-auto flex flex-col p-6 rounded-lg shadow-lg">
   <div class="card-title justify-ceneter text-3xl text-primary">Sign up</div>
 
+  <ul class="steps">
+    <li class="step step-primary">Credentials</li>
+    <li class="step" [class]="{ 'step-primary': currentStep() === 2 }">
+      Profile
+    </li>
+  </ul>
+
   <div class="card-body">
-    <form
-      class="flex flex-col gap-4"
-      (submit)="register(); $event.preventDefault()">
-      @let email = form.email;
-      @let displayName = form.displayName;
-      @let password = form.password;
-      @let confirmPassword = form.confirmPassword;
+    @if (currentStep() === 1) {
+      <form class="flex flex-col gap-4 steps">
+        @let email = credentialsForm.email;
+        @let displayName = credentialsForm.displayName;
+        @let password = credentialsForm.password;
+        @let confirmPassword = credentialsForm.confirmPassword;
 
-      <label class="floating-label">
-        <span>Email</span>
+        <label class="floating-label mt-3">
+          <span>Email</span>
 
-        <input
-          type="email"
-          class="input w-full"
-          placeholder="Email"
-          [field]="email" />
-      </label>
+          <input
+            type="email"
+            class="input w-full"
+            placeholder="Email"
+            [field]="email" />
+        </label>
 
-      <label class="floating-label">
-        <span>Display Name</span>
+        <label class="floating-label">
+          <span>Display Name</span>
 
-        <input
-          type="text"
-          class="input w-full"
-          [class]="{
-            'input-error':
-              displayName().touched() && displayName().errors().length,
-          }"
-          placeholder="Display name"
-          [field]="displayName" />
-        @if (displayName().touched()) {
-          @for (error of displayName().errors(); track error.kind) {
-            <div class="validation-hint text-error mt-1">
-              {{ error.message }}
-            </div>
+          <input
+            type="text"
+            class="input w-full"
+            [class]="{
+              'input-error':
+                displayName().touched() && displayName().errors().length,
+            }"
+            placeholder="Display name"
+            [field]="displayName" />
+          @if (displayName().touched()) {
+            @for (error of displayName().errors(); track error.kind) {
+              <div class="validation-hint text-error mt-1">
+                {{ error.message }}
+              </div>
+            }
           }
-        }
-      </label>
+        </label>
 
-      <label class="floating-label">
-        <span>Password</span>
+        <label class="floating-label">
+          <span>Password</span>
 
-        <input
-          type="password"
-          class="input w-full"
-          placeholder="Password"
-          [field]="password" />
-      </label>
+          <input
+            type="password"
+            class="input w-full"
+            placeholder="Password"
+            [field]="password" />
+        </label>
 
-      <label class="floating-label">
-        <span>Confirm Password</span>
+        <label class="floating-label">
+          <span>Confirm Password</span>
 
-        <input
-          type="password"
-          class="input w-full"
-          placeholder="Confirm Password"
-          [field]="confirmPassword" />
-      </label>
+          <input
+            type="password"
+            class="input w-full"
+            placeholder="Confirm Password"
+            [field]="confirmPassword" />
+        </label>
 
-      <div class="flex items-center justify-end gap-3">
-        <button type="button" class="btn" type="submit" (click)="cancel()">
-          Cancel
-        </button>
+        <div class="flex items-center justify-end gap-3">
+          <button type="button" class="btn" type="submit" (click)="cancel()">
+            Cancel
+          </button>
 
-        <button
-          class="btn btn-primary"
-          type="submit"
-          [disabled]="form().invalid()">
-          Register
-        </button>
-      </div>
-    </form>
+          <button
+            class="btn btn-primary"
+            type="text"
+            (click)="nextStep()"
+            [disabled]="credentialsForm().invalid()">
+            Next
+          </button>
+        </div>
+      </form>
+    }
+
+    @if (currentStep() === 2) {
+      <form class="flex flex-col gap-4 steps">
+        <div class="flex items-center justify-end gap-3">
+          <button type="button" class="btn" type="submit" (click)="prevStep()">
+            Cancel
+          </button>
+
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="register()"
+            [disabled]="profileForm().invalid()">
+            Register
+          </button>
+        </div>
+      </form>
+    }
   </div>
 
   <div class="flex flex-col w-full mockup-code text-lg">
-    <div class="px-3">Form value: {{ form().value() | json }}</div>
-    <div class="px-3">Form isValid: {{ form().valid() | json }}</div>
+    <div class="px-3">Creds value: {{ credentialsForm().value() | json }}</div>
+    <div class="px-3">
+      Creds isValid: {{ credentialsForm().valid() | json }}
+    </div>
+    <div class="px-3">Profile value: {{ profileForm().value() | json }}</div>
+    <div class="px-3">Profile isValid: {{ profileForm().valid() | json }}</div>
   </div>
 </div>

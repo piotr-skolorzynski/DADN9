@@ -11,7 +11,7 @@ import {
 } from '@angular/forms/signals';
 import { catchError, of, tap } from 'rxjs';
 import { AccountService } from '@core/services';
-import { IRegisterCredentials } from '@models/interfaces';
+import { IRegisterCredentials, IRegisterProfile } from '@models/interfaces';
 import { JsonPipe } from '@angular/common';
 
 @Component({
@@ -23,19 +23,24 @@ export class Register {
   public cancelRegister = output<boolean>();
 
   private readonly accountService = inject(AccountService);
-
   private readonly emptyRegisterCredentials: IRegisterCredentials = {
     email: '',
     displayName: '',
     password: '',
     confirmPassword: '',
   };
-
-  protected readonly creds = signal<IRegisterCredentials>(
+  private readonly emptyProfileData: IRegisterProfile = {
+    gender: '',
+    dateOfBirth: '',
+    city: '',
+    country: '',
+  };
+  private readonly creds = signal<IRegisterCredentials>(
     this.emptyRegisterCredentials
   );
+  private readonly profile = signal<IRegisterProfile>(this.emptyProfileData);
 
-  protected readonly form = form(this.creds, schema => {
+  protected readonly credentialsForm = form(this.creds, schema => {
     required(schema.email, {
       message: 'Your Email is required!',
     });
@@ -66,20 +71,45 @@ export class Register {
     });
   });
 
+  protected readonly profileForm = form(this.profile, schema => {
+    required(schema.gender, { message: 'Your gender is required' });
+    required(schema.dateOfBirth, { message: 'Your date of birth is required' });
+    required(schema.city, { message: 'Your city is required' });
+    required(schema.country, { message: 'Your country is required' });
+  });
+  protected currentStep = signal(1);
+
   public register(): void {
-    this.accountService
-      .register(this.creds())
-      .pipe(
-        tap(response => {
-          console.log(response);
-          this.cancel();
-        }),
-        catchError(error => {
-          console.log(error.message);
-          return of();
-        })
-      )
-      .subscribe({});
+    if (this.credentialsForm().value() && this.profileForm().value()) {
+      const formData = {
+        ...this.credentialsForm().value(),
+        ...this.profileForm().value(),
+      };
+      console.log('formData: ', formData);
+    }
+    // this.accountService
+    //   .register(this.creds())
+    //   .pipe(
+    //     tap(response => {
+    //       console.log(response);
+    //       this.cancel();
+    //     }),
+    //     catchError(error => {
+    //       console.log(error.message);
+    //       return of();
+    //     })
+    //   )
+    //   .subscribe({});
+  }
+
+  public prevStep(): void {
+    this.currentStep.update(prevStep => prevStep - 1);
+  }
+
+  public nextStep(): void {
+    if (this.credentialsForm().valid()) {
+      this.currentStep.update(prevStep => prevStep + 1);
+    }
   }
 
   public cancel(): void {
