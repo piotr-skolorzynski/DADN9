@@ -1,4 +1,4 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import {
   email,
   form,
@@ -6,18 +6,18 @@ import {
   Field,
   minLength,
   maxLength,
-  validate,
   customError,
+  validateTree,
 } from '@angular/forms/signals';
-import { catchError, of, tap } from 'rxjs';
+import { JsonPipe } from '@angular/common';
 import { AccountService } from '@core/services';
 import { IRegisterCredentials, IRegisterProfile } from '@models/interfaces';
-import { JsonPipe } from '@angular/common';
+import { TextInput } from '@shared/index';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
-  imports: [Field, JsonPipe],
+  imports: [Field, JsonPipe, TextInput],
 })
 export class Register {
   public cancelRegister = output<boolean>();
@@ -58,16 +58,24 @@ export class Register {
     required(schema.confirmPassword, {
       message: 'Please Confirm your password',
     });
-    validate(schema.confirmPassword, ctx => {
+    validateTree(schema, ctx => {
       const password = ctx.valueOf(schema.password);
-      const confirmPassword = ctx.value();
+      const confirmPassword = ctx.valueOf(schema.confirmPassword);
 
       return password === confirmPassword
         ? undefined
-        : customError({
-            message: 'Passwords do not match',
-            kind: 'passwordMismatch',
-          });
+        : [
+            customError({
+              field: ctx.fieldTreeOf(schema.password),
+              message: 'Passwords do not match',
+              kind: 'passwordMismatch',
+            }),
+            customError({
+              field: ctx.fieldTreeOf(schema.confirmPassword),
+              message: 'Passwords do not match',
+              kind: 'passwordMismatch',
+            }),
+          ];
     });
   });
 
@@ -78,6 +86,32 @@ export class Register {
     required(schema.country, { message: 'Your country is required' });
   });
   protected currentStep = signal(1);
+
+  //TODO: move error into input when props like touched, errors will work inside input using FormValueControl
+
+  protected hasEmailError = computed(
+    () =>
+      this.credentialsForm.email().errors().length > 0 &&
+      this.credentialsForm.email().dirty()
+  );
+
+  protected hasDisplayNameError = computed(
+    () =>
+      this.credentialsForm.displayName().errors().length > 0 &&
+      this.credentialsForm.displayName().dirty()
+  );
+
+  protected hasPasswordError = computed(
+    () =>
+      this.credentialsForm.password().errors().length > 0 &&
+      this.credentialsForm.password().dirty()
+  );
+
+  protected hasConfirmPasswordError = computed(
+    () =>
+      this.credentialsForm.confirmPassword().errors().length > 0 &&
+      this.credentialsForm.confirmPassword().dirty()
+  );
 
   public register(): void {
     if (this.credentialsForm().value() && this.profileForm().value()) {

@@ -8,6 +8,8 @@
     </li>
   </ul>
 
+  <!-- TODO:// touched is not working for now, replaced with dirty, change when fixed -->
+
   <div class="card-body">
     @if (currentStep() === 1) {
       <form class="flex flex-col gap-4 steps">
@@ -16,65 +18,70 @@
         @let password = credentialsForm.password;
         @let confirmPassword = credentialsForm.confirmPassword;
 
-        <label class="floating-label mt-3">
-          <span>Email</span>
+        <app-text-input
+          class="mt-3"
+          type="email"
+          label="Email"
+          [field]="email"
+          [hasError]="hasEmailError()" />
 
-          <input
-            type="email"
-            class="input w-full"
-            placeholder="Email"
-            [field]="email" />
-        </label>
-
-        <label class="floating-label">
-          <span>Display Name</span>
-
-          <input
-            type="text"
-            class="input w-full"
-            [class]="{
-              'input-error':
-                displayName().touched() && displayName().errors().length,
-            }"
-            placeholder="Display name"
-            [field]="displayName" />
-          @if (displayName().touched()) {
-            @for (error of displayName().errors(); track error.kind) {
-              <div class="validation-hint text-error mt-1">
-                {{ error.message }}
-              </div>
-            }
+        @if (email().dirty()) {
+          @for (error of email().errors(); track error.kind) {
+            <div class="validation-hint text-error -mt-3">
+              {{ error.message }}
+            </div>
           }
-        </label>
+        }
 
-        <label class="floating-label">
-          <span>Password</span>
+        <app-text-input
+          label="Display Name"
+          [field]="displayName"
+          [hasError]="hasDisplayNameError()" />
 
-          <input
-            type="password"
-            class="input w-full"
-            placeholder="Password"
-            [field]="password" />
-        </label>
+        @if (displayName().dirty()) {
+          @for (error of displayName().errors(); track error.kind) {
+            <div class="validation-hint text-error -mt-3">
+              {{ error.message }}
+            </div>
+          }
+        }
 
-        <label class="floating-label">
-          <span>Confirm Password</span>
+        <app-text-input
+          type="password"
+          label="Password"
+          [field]="password"
+          [hasError]="hasPasswordError()" />
 
-          <input
-            type="password"
-            class="input w-full"
-            placeholder="Confirm Password"
-            [field]="confirmPassword" />
-        </label>
+        @if (password().dirty()) {
+          @for (error of password().errors(); track error.kind) {
+            <div class="validation-hint text-error -mt-3">
+              {{ error.message }}
+            </div>
+          }
+        }
+
+        <app-text-input
+          type="password"
+          label="Confirm Password"
+          [field]="confirmPassword"
+          [hasError]="hasConfirmPasswordError()" />
+
+        @if (confirmPassword().dirty()) {
+          @for (error of confirmPassword().errors(); track error.kind) {
+            <div class="validation-hint text-error -mt-3">
+              {{ error.message }}
+            </div>
+          }
+        }
 
         <div class="flex items-center justify-end gap-3">
-          <button type="button" class="btn" type="submit" (click)="cancel()">
+          <button type="button" class="btn" type="button" (click)="cancel()">
             Cancel
           </button>
 
           <button
             class="btn btn-primary"
-            type="text"
+            type="button"
             (click)="nextStep()"
             [disabled]="credentialsForm().invalid()">
             Next
@@ -86,7 +93,7 @@
     @if (currentStep() === 2) {
       <form class="flex flex-col gap-4 steps">
         <div class="flex items-center justify-end gap-3">
-          <button type="button" class="btn" type="submit" (click)="prevStep()">
+          <button type="button" class="btn" type="button" (click)="prevStep()">
             Cancel
           </button>
 

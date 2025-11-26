@@ -1,0 +1,13 @@
+<label class="floating-label">
+  <span>{{ label() }}</span>
+
+  <input
+    [type]="type()"
+    class="input w-full"
+    [class]="{
+      'input-error': hasError(),
+    }"
+    [placeholder]="label()"
+    [value]="value()"
+    (input)="onChange($event)" />
+</label>
