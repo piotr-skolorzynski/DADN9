@@ -9,33 +9,41 @@ import {
   customError,
   validateTree,
 } from '@angular/forms/signals';
-import { JsonPipe } from '@angular/common';
+import { Router } from '@angular/router';
+import { catchError, EMPTY, tap } from 'rxjs';
 import { AccountService } from '@core/services';
-import { IRegisterCredentials, IRegisterProfile } from '@models/interfaces';
+import {
+  ICombinedCredentialForms,
+  IRegisterCredentialsForm,
+  IRegisterProfile,
+} from '@models/interfaces';
 import { TextInput } from '@shared/index';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
-  imports: [Field, JsonPipe, TextInput],
+  imports: [Field, TextInput],
 })
 export class Register {
   public cancelRegister = output<boolean>();
 
+  protected validationErrors = signal<string[]>([]);
+
   private readonly accountService = inject(AccountService);
-  private readonly emptyRegisterCredentials: IRegisterCredentials = {
+  private readonly router = inject(Router);
+  private readonly emptyRegisterCredentials: IRegisterCredentialsForm = {
     email: '',
     displayName: '',
     password: '',
     confirmPassword: '',
   };
   private readonly emptyProfileData: IRegisterProfile = {
-    gender: '',
+    gender: 'male',
     dateOfBirth: '',
     city: '',
     country: '',
   };
-  private readonly creds = signal<IRegisterCredentials>(
+  private readonly creds = signal<IRegisterCredentialsForm>(
     this.emptyRegisterCredentials
   );
   private readonly profile = signal<IRegisterProfile>(this.emptyProfileData);
@@ -115,49 +123,50 @@ export class Register {
 
   protected hasGenderError = computed(
     () =>
-      this.credentialsForm.confirmPassword().errors().length > 0 &&
-      this.credentialsForm.confirmPassword().dirty()
+      this.profileForm.gender().errors().length > 0 &&
+      this.profileForm.gender().dirty()
   );
 
   protected hasDateOfBirthError = computed(
     () =>
-      this.credentialsForm.confirmPassword().errors().length > 0 &&
-      this.credentialsForm.confirmPassword().dirty()
+      this.profileForm.dateOfBirth().errors().length > 0 &&
+      this.profileForm.dateOfBirth().dirty()
   );
 
   protected hasCityError = computed(
     () =>
-      this.credentialsForm.confirmPassword().errors().length > 0 &&
-      this.credentialsForm.confirmPassword().dirty()
+      this.profileForm.city().errors().length > 0 &&
+      this.profileForm.city().dirty()
   );
 
   protected hasCountryError = computed(
     () =>
-      this.credentialsForm.confirmPassword().errors().length > 0 &&
-      this.credentialsForm.confirmPassword().dirty()
+      this.profileForm.country().errors().length > 0 &&
+      this.profileForm.country().dirty()
   );
 
   public register(): void {
     if (this.credentialsForm().value() && this.profileForm().value()) {
-      const formData = {
+      const formData: ICombinedCredentialForms = {
         ...this.credentialsForm().value(),
         ...this.profileForm().value(),
       };
-      console.log('formData: ', formData);
+
+      delete formData.confirmPassword;
+
+      this.accountService
+        .register(formData)
+        .pipe(
+          tap(() => this.router.navigateByUrl('/members')),
+          catchError(error => {
+            console.log(error);
+            this.validationErrors.set(error);
+
+            return EMPTY;
+          })
+        )
+        .subscribe();
     }
-    // this.accountService
-    //   .register(this.creds())
-    //   .pipe(
-    //     tap(response => {
-    //       console.log(response);
-    //       this.cancel();
-    //     }),
-    //     catchError(error => {
-    //       console.log(error.message);
-    //       return of();
-    //     })
-    //   )
-    //   .subscribe({});
   }
 
   public prevStep(): void {

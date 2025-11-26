@@ -185,12 +185,13 @@
     }
   </div>
 
-  <div class="flex flex-col w-full mockup-code text-lg">
-    <div class="px-3">Creds value: {{ credentialsForm().value() | json }}</div>
-    <div class="px-3">
-      Creds isValid: {{ credentialsForm().valid() | json }}
+  @if (validationErrors().length) {
+    <div class="flex mt-5 bg-gray-200 rounded-2xl w-1/2 p-3 mx-auto">
+      <ul class="flex flex-col text-error space-y-1">
+        @for (error of validationErrors(); track $index) {
+          <li>{{ error }}</li>
+        }
+      </ul>
     </div>
-    <div class="px-3">Profile value: {{ profileForm().value() | json }}</div>
-    <div class="px-3">Profile isValid: {{ profileForm().valid() | json }}</div>
-  </div>
+  }
 </div>
