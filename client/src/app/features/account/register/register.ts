@@ -113,6 +113,30 @@ export class Register {
       this.credentialsForm.confirmPassword().dirty()
   );
 
+  protected hasGenderError = computed(
+    () =>
+      this.credentialsForm.confirmPassword().errors().length > 0 &&
+      this.credentialsForm.confirmPassword().dirty()
+  );
+
+  protected hasDateOfBirthError = computed(
+    () =>
+      this.credentialsForm.confirmPassword().errors().length > 0 &&
+      this.credentialsForm.confirmPassword().dirty()
+  );
+
+  protected hasCityError = computed(
+    () =>
+      this.credentialsForm.confirmPassword().errors().length > 0 &&
+      this.credentialsForm.confirmPassword().dirty()
+  );
+
+  protected hasCountryError = computed(
+    () =>
+      this.credentialsForm.confirmPassword().errors().length > 0 &&
+      this.credentialsForm.confirmPassword().dirty()
+  );
+
   public register(): void {
     if (this.credentialsForm().value() && this.profileForm().value()) {
       const formData = {
@@ -148,5 +172,12 @@ export class Register {
 
   public cancel(): void {
     this.cancelRegister.emit(false);
+  }
+
+  public getMaxDate(): string {
+    const today = new Date();
+    today.setFullYear(today.getFullYear() - 18);
+
+    return today.toISOString().split('T')[0];
   }
 }

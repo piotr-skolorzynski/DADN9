@@ -7,8 +7,9 @@ import { FormValueControl } from '@angular/forms/signals';
 })
 export class TextInput implements FormValueControl<string> {
   public readonly label = input.required<string>();
-  public readonly type = input<'text' | 'email' | 'password'>('text');
+  public readonly type = input<'text' | 'email' | 'password' | 'date'>('text');
   public readonly hasError = input.required<boolean>();
+  public maxDate = input<string>('');
 
   public readonly value = model<string>('');
 

@@ -92,6 +92,82 @@
 
     @if (currentStep() === 2) {
       <form class="flex flex-col gap-4 steps">
+        @let gender = profileForm.gender;
+        @let dateOfBirth = profileForm.dateOfBirth;
+        @let city = profileForm.city;
+        @let country = profileForm.country;
+
+        <div class="flex items-center gap-4">
+          <div class="semi-bold">Gender:</div>
+
+          <label class="flex gap-3 items-center">
+            <span>Male</span>
+            <input
+              type="radio"
+              [field]="gender"
+              value="male"
+              class="radio radio-primary" />
+          </label>
+
+          <label class="flex gap-3 items-center">
+            <span>Female</span>
+            <input
+              type="radio"
+              [field]="gender"
+              value="female"
+              class="radio radio-primary" />
+          </label>
+        </div>
+
+        @if (gender().dirty()) {
+          @for (error of gender().errors(); track error.kind) {
+            <div class="validation-hint text-error -mt-3">
+              {{ error.message }}
+            </div>
+          }
+        }
+
+        <app-text-input
+          type="date"
+          [maxDate]="getMaxDate()"
+          label="Date Of Birth"
+          [field]="dateOfBirth"
+          [hasError]="hasDateOfBirthError()" />
+
+        @if (dateOfBirth().dirty()) {
+          @for (error of dateOfBirth().errors(); track error.kind) {
+            <div class="validation-hint text-error -mt-3">
+              {{ error.message }}
+            </div>
+          }
+        }
+
+        <app-text-input
+          label="City"
+          [field]="city"
+          [hasError]="hasCityError()" />
+
+        @if (city().dirty()) {
+          @for (error of city().errors(); track error.kind) {
+            <div class="validation-hint text-error -mt-3">
+              {{ error.message }}
+            </div>
+          }
+        }
+
+        <app-text-input
+          label="Country"
+          [field]="country"
+          [hasError]="hasCountryError()" />
+
+        @if (country().dirty()) {
+          @for (error of country().errors(); track error.kind) {
+            <div class="validation-hint text-error -mt-3">
+              {{ error.message }}
+            </div>
+          }
+        }
+
         <div class="flex items-center justify-end gap-3">
           <button type="button" class="btn" type="button" (click)="prevStep()">
             Cancel
