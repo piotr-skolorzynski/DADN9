@@ -12,7 +12,7 @@
 
   <div class="card-body">
     @if (currentStep() === 1) {
-      <form class="flex flex-col gap-4 steps">
+      <form class="flex flex-col gap-4 steps p-1">
         @let email = credentialsForm.email;
         @let displayName = credentialsForm.displayName;
         @let password = credentialsForm.password;
@@ -91,7 +91,7 @@
     }
 
     @if (currentStep() === 2) {
-      <form class="flex flex-col gap-4 steps">
+      <form class="flex flex-col gap-4 steps p-1">
         @let gender = profileForm.gender;
         @let dateOfBirth = profileForm.dateOfBirth;
         @let city = profileForm.city;

@@ -157,7 +157,10 @@ export class Register {
       this.accountService
         .register(formData)
         .pipe(
-          tap(() => this.router.navigateByUrl('/members')),
+          tap(() => {
+            this.router.navigateByUrl('/members');
+            this.cancel();
+          }),
           catchError(error => {
             console.log(error);
             this.validationErrors.set(error);

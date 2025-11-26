@@ -42,6 +42,9 @@ export class MemberPhotos implements OnInit {
           this.memberService.setEditMode(false);
           this.loading.set(false);
           this.photos.update(photos => [...photos, photo]);
+          if (!this.memberService.member()?.imageUrl) {
+            this.setMainLocalPhoto(photo);
+          }
         }),
         catchError(error => {
           console.log('Error loading image: ', error);
@@ -56,29 +59,11 @@ export class MemberPhotos implements OnInit {
   public setMainPhoto(photo: IPhoto): void {
     this.memberService
       .setMainPhoto(photo.id)
-      .pipe(
-        tap(() => {
-          const currentUser = this.accountService.getCurrentUser();
-          if (currentUser) {
-            this.accountService.setCurrentUser({
-              ...currentUser,
-              imageUrl: photo.url,
-            });
-
-            const member = this.memberService.member();
-            if (member) {
-              this.memberService.setMember({
-                ...member,
-                imageUrl: photo.url,
-              } as IMember);
-            }
-          }
-        })
-      )
+      .pipe(tap(() => this.setMainLocalPhoto(photo)))
       .subscribe();
   }
 
-  public delePhoto(photoId: number): void {
+  public deletePhoto(photoId: number): void {
     this.memberService
       .deletePhoto(photoId)
       .pipe(
@@ -105,5 +90,23 @@ export class MemberPhotos implements OnInit {
         tap(photos => this.photos.set(photos))
       )
       .subscribe();
+  }
+
+  private setMainLocalPhoto(photo: IPhoto): void {
+    const currentUser = this.accountService.getCurrentUser();
+    if (currentUser) {
+      this.accountService.setCurrentUser({
+        ...currentUser,
+        imageUrl: photo.url,
+      });
+
+      const member = this.memberService.member();
+      if (member) {
+        this.memberService.setMember({
+          ...member,
+          imageUrl: photo.url,
+        } as IMember);
+      }
+    }
   }
 }

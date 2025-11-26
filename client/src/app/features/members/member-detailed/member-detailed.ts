@@ -10,7 +10,6 @@ import {
 import { filter, tap } from 'rxjs';
 import { AgePipe } from '@core/pipes';
 import { AccountService, MemberService } from '@core/services';
-import { IMember } from '@models/interfaces';
 
 @Component({
   selector: 'app-member-detailed',
