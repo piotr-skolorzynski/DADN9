@@ -1,5 +1,7 @@
-<div class="grid grid-cols-5 gap-6">
-  @for (member of members(); track member.id) {
-    <app-member-card [member]="member" />
-  }
-</div>
+@if (paginatedMembers()?.items?.length) {
+  <div class="grid grid-cols-5 gap-6">
+    @for (member of paginatedMembers()?.items; track member.id) {
+      <app-member-card [member]="member" />
+    }
+  </div>
+}

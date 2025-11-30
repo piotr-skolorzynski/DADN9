@@ -10,7 +10,7 @@ import { MemberCard } from '../member-card/member-card';
 })
 export class MemberList {
   private readonly memberService = inject(MemberService);
-  protected members = toSignal(this.memberService.getMembers(), {
-    initialValue: [],
+  protected paginatedMembers = toSignal(this.memberService.getMembers(), {
+    initialValue: null,
   });
 }

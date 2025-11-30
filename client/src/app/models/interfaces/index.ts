@@ -3,6 +3,8 @@ export * from './combined-credential-forms.interface';
 export * from './editable-member.interface';
 export * from './login-credentials.interface';
 export * from './member.interface';
+export * from './paginated-result.interface';
+export * from './pagination.interface';
 export * from './photo.interface';
 export * from './register-credentials.interface';
 export * from './register-credentials-form.interface';

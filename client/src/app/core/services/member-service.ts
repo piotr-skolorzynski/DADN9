@@ -1,7 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { IEditableMember, IMember, IPhoto } from '@models/interfaces';
+import {
+  IEditableMember,
+  IMember,
+  IPaginatedResult,
+  IPhoto,
+} from '@models/interfaces';
 import { environment } from 'environments/environment';
 
 @Injectable({
@@ -25,8 +30,19 @@ export class MemberService {
     this.memberSignal.set(member);
   }
 
-  public getMembers(): Observable<IMember[]> {
-    return this.http.get<IMember[]>(this.baseUrl + 'members');
+  public getMembers(
+    pageNumber = 1,
+    pageSize = 5
+  ): Observable<IPaginatedResult<IMember>> {
+    // let params = new HttpParams(); // w angular 21 nie zadziałał poprawnie HttpParams
+    // params.append('pageNumber', pageNumber);
+    // params.append('pageSize', pageSize);
+
+    const params = { pageNumber, pageSize };
+
+    return this.http.get<IPaginatedResult<IMember>>(this.baseUrl + 'members', {
+      params,
+    });
   }
 
   public getMember(id: string): Observable<IMember> {
