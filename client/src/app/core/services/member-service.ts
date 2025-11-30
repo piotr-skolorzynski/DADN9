@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import {
@@ -32,7 +32,7 @@ export class MemberService {
 
   public getMembers(
     pageNumber = 1,
-    pageSize = 5
+    pageSize = 10
   ): Observable<IPaginatedResult<IMember>> {
     // let params = new HttpParams(); // w angular 21 nie zadziałał poprawnie HttpParams
     // params.append('pageNumber', pageNumber);
