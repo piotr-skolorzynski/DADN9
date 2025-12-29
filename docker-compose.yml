@@ -1,0 +1,78 @@
+version: '3.8'
+
+# Production/Default configuration
+# For development with hot-reload, use:
+# docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  api:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    container_name: datingapp-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: ${DATABASE_CONNECTION_STRING:-Data source=/app/data/dating.db}
+      TokenKey: ${TOKEN_KEY}
+      CloudinarySettings__CloudName: ${CLOUDINARY_CLOUD_NAME}
+      CloudinarySettings__ApiKey: ${CLOUDINARY_API_KEY}
+      CloudinarySettings__ApiSecret: ${CLOUDINARY_API_SECRET}
+      CORS__AllowedOrigins: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200}
+    volumes:
+      - sqlite_data:/app/data
+    ports:
+      - "${API_PORT:-5000}:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - backend-network
+      - frontend-network
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - API_URL=${CLIENT_API_URL:-http://localhost:5000/api/}
+    container_name: datingapp-client
+    restart: unless-stopped
+    ports:
+      - "${CLIENT_PORT:-4200}:80"
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - frontend-network
+
+networks:
+  # Backend network - for API and database layer (SQLite file access)
+  # Future backend services can be added to this network
+  backend-network:
+    driver: bridge
+    name: datingapp-backend
+    internal: false
+    
+  # Frontend network - for Client and API communication
+  # Client can only access API, not the backend/database layer directly
+  frontend-network:
+    driver: bridge
+    name: datingapp-frontend
+    internal: false
+
+volumes:
+  # SQLite database file storage
+  # Isolated to the backend network through the API container
+  sqlite_data:
+    driver: local
+

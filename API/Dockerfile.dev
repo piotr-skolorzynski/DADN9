@@ -1,0 +1,40 @@
+# Development Dockerfile for API with hot-reload support
+FROM mcr.microsoft.com/dotnet/sdk:9.0.100 AS development
+WORKDIR /src
+
+# Create non-root user with home directory
+RUN groupadd -r appuser -g 1000 && \
+    useradd -r -g appuser -u 1000 -m -d /home/appuser -s /bin/bash appuser
+
+# Install curl for health checks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Copy csproj and restore dependencies
+COPY ["API.csproj", "./"]
+RUN dotnet restore "API.csproj"
+
+# Copy everything else
+COPY . .
+
+# Create data directory for SQLite and change ownership to non-root user
+RUN mkdir -p /src/data /app/data && \
+    chown -R appuser:appuser /src /home/appuser /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 8080
+
+# Set environment variables
+ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_ENVIRONMENT=Development
+
+# Health check (with longer timeout for dev)
+HEALTHCHECK --interval=60s --timeout=10s --start-period=120s --retries=3 \
+    CMD curl -f http://localhost:8080/api/health || exit 1
+
+# Use dotnet watch for hot-reload
+# Note: command can be overridden in docker-compose.dev.yml
+ENTRYPOINT ["dotnet", "watch", "run", "--urls", "http://+:8080"]
+

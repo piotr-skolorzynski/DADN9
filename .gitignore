@@ -393,6 +393,9 @@ FodyWeavers.xsd
 # Local History for Visual Studio Code
 .history/
 
+# Cursor IDE files
+.cursor/
+
 # Windows Installer files from build outputs
 *.cab
 *.msi
@@ -421,6 +424,7 @@ autom4te.cache/
 *.tar.gz
 tarballs/
 test-results/
+env.example
 
 # Mac bundle stuff
 *.dmg

@@ -1,0 +1,49 @@
+# Development Dockerfile for Angular client with hot-reload support
+FROM node:22.12.0-alpine AS development
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S angular -u 1001
+
+# Upgrade npm to latest version for Angular 21 compatibility
+RUN npm install -g npm@latest
+
+# Verify versions
+RUN node --version && npm --version
+
+# Install dependencies (will be cached if package.json doesn't change)
+# Copy package files - handle case where package-lock.json might not exist or be incompatible
+COPY package.json ./
+COPY package-lock.json* ./
+
+# Use npm install for development (more flexible than npm ci)
+# npm ci requires exact lockfile match and compatible lockfileVersion
+# npm install will work even if lockfile is missing or incompatible
+RUN npm install
+
+# Change ownership
+RUN chown -R angular:nodejs /app
+
+# Switch to non-root user
+USER angular
+
+# Build argument for API URL
+ARG API_URL=http://localhost:5000/api/
+ENV API_URL=${API_URL}
+
+# Expose Angular dev server port
+EXPOSE 4200
+
+# Set environment variables for development
+ENV NODE_ENV=development
+ENV CHOKIDAR_USEPOLLING=true
+
+# Health check disabled in dev mode (ng serve takes time)
+# HEALTHCHECK disabled
+
+# Start Angular development server with hot-reload
+# Note: command can be overridden in docker-compose.dev.yml
+# ng serve --host 0.0.0.0 to allow access from outside container
+CMD ["npx", "ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000"]
+

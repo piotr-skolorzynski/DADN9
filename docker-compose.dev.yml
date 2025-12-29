@@ -1,0 +1,51 @@
+version: '3.8'
+
+# Development override - extends docker-compose.yml
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  api:
+    build:
+      context: ./API
+      dockerfile: Dockerfile.dev
+    volumes:
+      # Mount source code for hot-reload
+      - ./API:/src
+      - /src/bin
+      - /src/obj
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      # Enable hot-reload
+      DOTNET_WATCH_RUN_ON_CHANGES: "true"
+    command: dotnet watch run --urls http://+:8080
+    # Remove health check in dev mode (watch takes time to start)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+      args:
+        - API_URL=${CLIENT_API_URL:-http://localhost:5000/api/}
+    volumes:
+      # Mount source code for hot-reload
+      - ./client:/app
+      - /app/node_modules
+      - /app/.angular
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    # Override command to ensure host binding
+    command: npx ng serve --host 0.0.0.0 --port 4200 --poll 2000
+    ports:
+      - "${CLIENT_PORT:-4200}:4200"
+    # Remove health check in dev mode (ng serve takes time)
+    healthcheck:
+      disable: true
+
