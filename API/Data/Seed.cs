@@ -11,7 +11,8 @@ public class Seed
 {
     public static async Task SeedUsers(AppDbContext context)
     {
-        if (await context.Users.AnyAsync()) return;
+        if (await context.Users.AnyAsync())
+            return;
 
         var memberData = await File.ReadAllTextAsync("Data/UserSeedData.json");
         var members = JsonSerializer.Deserialize<List<SeedUserDto>>(memberData);
@@ -22,11 +23,10 @@ public class Seed
             return;
         }
 
-
         foreach (var member in members)
         {
             using var hmac = new HMACSHA512();
-            
+
             var user = new AppUser
             {
                 Id = member.Id,
@@ -46,15 +46,11 @@ public class Seed
                     City = member.City,
                     Country = member.Country,
                     LastActive = member.LastActive,
-                    Created = member.Created
-                }
+                    Created = member.Created,
+                },
             };
 
-            user.Member.Photos.Add(new Photo
-            {
-               Url = member.ImageUrl!,
-               MemberId = member.Id 
-            });
+            user.Member.Photos.Add(new Photo { Url = member.ImageUrl!, MemberId = member.Id });
 
             context.Users.Add(user);
         }

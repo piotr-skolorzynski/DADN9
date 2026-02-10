@@ -15,7 +15,8 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
     [HttpPost("register")] // api/account/register
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
-        if (await EmailExists(registerDto.Email)) return BadRequest("Email taken");
+        if (await EmailExists(registerDto.Email))
+            return BadRequest("Email taken");
 
         using var hmac = new HMACSHA512();
 
@@ -31,14 +32,14 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
                 Gender = registerDto.Gender,
                 City = registerDto.City,
                 Country = registerDto.Country,
-                DateOfBirth = registerDto.DateOfBirth
-            }
+                DateOfBirth = registerDto.DateOfBirth,
+            },
         };
 
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-       return user.ToDto(tokenService);
+        return user.ToDto(tokenService);
     }
 
     [HttpPost("login")]
@@ -46,7 +47,8 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
     {
         var user = await context.Users.SingleOrDefaultAsync(user => user.Email == loginDto.Email);
 
-        if (user == null) return Unauthorized("Invalid email address"); //to change to general password and email
+        if (user == null)
+            return Unauthorized("Invalid email address"); //to change to general password and email
 
         using var hmac = new HMACSHA512(user.PasswordSalt);
 
@@ -54,7 +56,8 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
 
         for (var i = 0; i < computedHash.Length; i++)
         {
-            if (computedHash[i] != user.Password[i]) return Unauthorized("Inalid password"); //to do change to more generic
+            if (computedHash[i] != user.Password[i])
+                return Unauthorized("Inalid password"); //to do change to more generic
         }
 
         return user.ToDto(tokenService);

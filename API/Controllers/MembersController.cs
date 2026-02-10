@@ -9,10 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class MembersController( IMemberRepository membersRepository, IPhotoService photoService) : BaseApiController
+    public class MembersController(IMemberRepository membersRepository, IPhotoService photoService)
+        : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Member>>> GetMemebers([FromQuery] PagingParams pagingParams)
+        public async Task<ActionResult<IReadOnlyList<Member>>> GetMemebers(
+            [FromQuery] PagingParams pagingParams
+        )
         {
             return Ok(await membersRepository.GetMembersAsync(pagingParams));
         }
@@ -22,7 +25,8 @@ namespace API.Controllers
         {
             var member = await membersRepository.GetMemberByIdAsync(id);
 
-            if (member == null) return NotFound();
+            if (member == null)
+                return NotFound();
 
             return member;
         }
@@ -38,22 +42,25 @@ namespace API.Controllers
         {
             var memberId = User.GetMemberId();
 
-            if (memberId == null) return BadRequest("Oops - no id found in token");
+            if (memberId == null)
+                return BadRequest("Oops - no id found in token");
 
             var member = await membersRepository.GetMemberForUpdate(memberId);
 
-            if (member == null) return BadRequest("Could not get member");
+            if (member == null)
+                return BadRequest("Could not get member");
 
-            member.DisplayName = memberUpdateDto.DisplayName ?? member.DisplayName; 
-            member.Description = memberUpdateDto.Description ?? member.Description; 
-            member.City = memberUpdateDto.City ?? member.City; 
-            member.Country = memberUpdateDto.Country ?? member.Country; 
+            member.DisplayName = memberUpdateDto.DisplayName ?? member.DisplayName;
+            member.Description = memberUpdateDto.Description ?? member.Description;
+            member.City = memberUpdateDto.City ?? member.City;
+            member.Country = memberUpdateDto.Country ?? member.Country;
 
             member.User.DisplayName = memberUpdateDto.DisplayName ?? member.User.DisplayName;
 
             // membersRepository.Update(member); //optional
 
-            if (await membersRepository.SaveAllAsync()) return NoContent(); //returns 402
+            if (await membersRepository.SaveAllAsync())
+                return NoContent(); //returns 402
 
             return BadRequest("Failed to update member");
         }
@@ -63,19 +70,21 @@ namespace API.Controllers
         {
             var member = await membersRepository.GetMemberForUpdate(User.GetMemberId());
 
-            if (member == null ) return BadRequest("Cannot update member");
+            if (member == null)
+                return BadRequest("Cannot update member");
 
             var result = await photoService.UploadPhotoAsync(file);
 
-            if (result.Error != null) return BadRequest(result.Error.Message);
+            if (result.Error != null)
+                return BadRequest(result.Error.Message);
 
             var photo = new Photo
             {
                 Url = result.SecureUrl.AbsoluteUri,
-                PublicId= result.PublicId,
-                MemberId = User.GetMemberId()
+                PublicId = result.PublicId,
+                MemberId = User.GetMemberId(),
             };
-            
+
             if (member.ImageUrl == null)
             {
                 member.ImageUrl = photo.Url;
@@ -84,7 +93,8 @@ namespace API.Controllers
 
             member.Photos.Add(photo);
 
-            if (await membersRepository.SaveAllAsync()) return photo;
+            if (await membersRepository.SaveAllAsync())
+                return photo;
 
             return BadRequest("Problem adding photo");
         }
@@ -94,16 +104,19 @@ namespace API.Controllers
         {
             var member = await membersRepository.GetMemberForUpdate(User.GetMemberId());
 
-            if (member == null) return BadRequest("Cannot get member from token");
+            if (member == null)
+                return BadRequest("Cannot get member from token");
 
             var photo = member.Photos.SingleOrDefault(x => x.Id == photoId);
 
-            if (member.ImageUrl == photo?.Url || photo == null) return BadRequest("Cannot set this as main image");
+            if (member.ImageUrl == photo?.Url || photo == null)
+                return BadRequest("Cannot set this as main image");
 
             member.ImageUrl = photo.Url;
             member.User.ImageUrl = photo.Url;
 
-            if (await membersRepository.SaveAllAsync()) return NoContent();
+            if (await membersRepository.SaveAllAsync())
+                return NoContent();
 
             return BadRequest("Problem setting main photo");
         }
@@ -113,21 +126,25 @@ namespace API.Controllers
         {
             var member = await membersRepository.GetMemberForUpdate(User.GetMemberId());
 
-            if (member == null) return BadRequest("Cannot get member from token");
+            if (member == null)
+                return BadRequest("Cannot get member from token");
 
             var photo = member.Photos.SingleOrDefault(x => x.Id == photoId);
 
-            if (photo == null || photo.Url == member.ImageUrl) return BadRequest("This photo cannot be deleted");
+            if (photo == null || photo.Url == member.ImageUrl)
+                return BadRequest("This photo cannot be deleted");
 
             if (photo.PublicId != null)
             {
                 var result = await photoService.DeletePhotoAsync(photo.PublicId);
-                if (result.Error != null) return BadRequest(result.Error.Message);
+                if (result.Error != null)
+                    return BadRequest(result.Error.Message);
             }
 
             member.Photos.Remove(photo);
 
-            if (await membersRepository.SaveAllAsync()) return Ok();
+            if (await membersRepository.SaveAllAsync())
+                return Ok();
 
             return BadRequest("Problem deleting photo");
         }

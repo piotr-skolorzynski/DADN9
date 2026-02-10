@@ -9,13 +9,13 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
 {
     public async Task<Member?> GetMemberByIdAsync(string id)
     {
-        return await context.Members.FindAsync(id) ;
+        return await context.Members.FindAsync(id);
     }
 
     public async Task<Member?> GetMemberForUpdate(string id)
     {
-        return await context.Members
-            .Include(x => x.User)
+        return await context
+            .Members.Include(x => x.User)
             .Include(x => x.Photos)
             .SingleOrDefaultAsync(x => x.Id == id);
     }
@@ -24,13 +24,17 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
     {
         var query = context.Members.AsQueryable();
 
-        return await PaginationHelper.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+        return await PaginationHelper.CreateAsync(
+            query,
+            pagingParams.PageNumber,
+            pagingParams.PageSize
+        );
     }
 
     public async Task<IReadOnlyList<Photo>> GetPhotosForMemberAsync(string memberId)
     {
-        return await context.Members
-            .Where(x => x.Id == memberId)
+        return await context
+            .Members.Where(x => x.Id == memberId)
             .SelectMany(x => x.Photos)
             .ToListAsync();
     }
